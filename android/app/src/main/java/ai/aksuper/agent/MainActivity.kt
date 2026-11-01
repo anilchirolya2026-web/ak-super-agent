@@ -94,11 +94,9 @@ fun App() {
                     "They need the live backend, which is not connected yet.",
                 onBack = { screen = Screen.Entry }
             )
-            Screen.Owner -> ComingSoonScreen(
-                title = "Owner / Admin",
-                body = "Owner sign-in (email + password + MFA) is created once on the server in Stage 3. " +
-                    "No password is stored inside this app.",
-                onBack = { screen = Screen.Entry }
+            Screen.Owner -> OwnerScreen(
+                onBack = { screen = Screen.Entry },
+                onServerCheck = { screen = Screen.Server }
             )
             Screen.Server -> ServerScreen(onBack = { screen = Screen.Entry })
         }
@@ -140,7 +138,7 @@ fun EntryScreen(onSelect: (Screen) -> Unit) {
         TextButton(onClick = { onSelect(Screen.Server) }) {
             Text("Server & device check", color = Ink)
         }
-        Text("v0.2.0 · Stage 2", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+        Text("v0.3.0 · Owner login", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
     }
 }
 
