@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
@@ -34,6 +37,18 @@ jobs:
           gradle-version: "8.14.3"
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon
+      - name: Publish APK to the "apk" branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          mkdir -p /tmp/apkout
+          cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/apkout/AKSuperAgent-debug.apk
+          cd /tmp/apkout
+          git init -q -b apk
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add AKSuperAgent-debug.apk
+          git commit -q -m "APK from ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" apk
       - uses: actions/upload-artifact@v4
         with:
           name: AKSuperAgent-debug-apk
